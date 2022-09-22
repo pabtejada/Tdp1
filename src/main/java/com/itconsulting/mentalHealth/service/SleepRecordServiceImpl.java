@@ -58,7 +58,6 @@ public class SleepRecordServiceImpl implements SleepRecordService {
 
         int time_difference= Math.toIntExact(sleepRecord.getEndDate().getTime() - sleepRecord.getStartDate().getTime());
 
-
         time_difference =  Math.toIntExact(time_difference/3600000);
 
         String durationString= String.valueOf((time_difference));

@@ -23,6 +23,7 @@ public class Affirmation {
     @Column(name = "dayOfTheWeek")
     @JsonIgnore
     private String dayOfTheWeek;
+
     @Column(name = "affirmationDate", nullable = false)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm")
     private Date creationDate;

@@ -8,7 +8,9 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "thought_record")
@@ -19,14 +21,28 @@ public class ThoughtRecord extends AuditModel{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "message", nullable = false,length = 256)
-    private String message;
+    @Lob
+    @Column(name = "situation", nullable = false)
+    private String situation;
 
-    @Column(updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
+    @Lob
+    @Column(name = "thoughts", nullable = false)
+    private String thoughts;
+
+    @Lob
+    @Column(name = "actions", nullable = false)
+    private String actions;
+    @Lob
+    @Column(name = "tipForFriend", nullable = false)
+    private String tipForFriend;
+
+    @ElementCollection
+    private List<String> moodsFelt = new ArrayList<String>();
+
+    @Column(name = "createdAt", nullable = false)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm")
-    @CreatedDate
     private Date createdAt;
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "user_id")
     @OnDelete(action = OnDeleteAction.CASCADE)

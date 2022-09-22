@@ -40,16 +40,17 @@ public class ThoughtRecordServiceImpl implements ThoughtRecordService {
     }
 
     @Override
-    public ThoughtRecord updateThoughtRecordById(ThoughtRecord thoughtRecord, Long thoughtRecordId, Long userId) {
+    public ThoughtRecord updateThoughtRecordById(ThoughtRecord newThoughtRecord, Long thoughtRecordId, Long userId) {
         userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
-        ThoughtRecord thoughtRecord1=  thoughtRecordRepository.findById(thoughtRecordId).orElseThrow(()-> new ResourceNotFoundException("Thought", "Id", thoughtRecordId));
-        thoughtRecord1.setMessage(thoughtRecord.getMessage());
-        return thoughtRecordRepository.save(thoughtRecord1);
+        ThoughtRecord oldThoughtRecord =  thoughtRecordRepository.findById(thoughtRecordId).orElseThrow(()-> new ResourceNotFoundException("Thought", "Id", thoughtRecordId));
+        newThoughtRecord.setId(oldThoughtRecord.getId());
+        newThoughtRecord.setUser(oldThoughtRecord.getUser());
+        return thoughtRecordRepository.save(newThoughtRecord);
     }
 
     @Override
     public ThoughtRecord saveThoughtRecord(ThoughtRecord thoughtRecord, Long userId) {
-      DAOUser user= userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
+      DAOUser user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
       thoughtRecord.setUser(user);
       return thoughtRecordRepository.save(thoughtRecord);
     }

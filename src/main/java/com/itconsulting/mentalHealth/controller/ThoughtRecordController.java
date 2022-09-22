@@ -5,9 +5,7 @@ import com.itconsulting.mentalHealth.core.service.ThoughtRecordService;
 import com.itconsulting.mentalHealth.resource.ThoughtRecordResource;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +31,15 @@ public class ThoughtRecordController {
     }
 
     @GetMapping("/users/{userId}/thoughtRecords")
-    public Page<ThoughtRecordResource> getAllThoughtRecordsByUserId(@PathVariable(name = "userId") Long userId, Pageable pageable) {
+    public Page<ThoughtRecordResource> getAllThoughtRecordsByUserId(
+            @PathVariable(name = "userId") Long userId,
+            @RequestParam(required = false) Integer pageSize,
+            @RequestParam(required = false) Integer pageNumber) {
+        //Default page config
+        if (pageSize == null){ pageSize = Integer.MAX_VALUE; }
+        if (pageNumber == null){ pageNumber = 0; }
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("id").descending());
+
         List<ThoughtRecordResource> resources = thoughtRecordService.getAllThoughtRecordsByUserId(userId,pageable)
                 .getContent().stream().map(this::convertToResource).collect(Collectors.toList());
         int count = resources.size();
@@ -41,26 +47,30 @@ public class ThoughtRecordController {
     }
 
     @GetMapping("/users/{userId}/thoughtRecords/{thoughtRecordId}")
-    public ThoughtRecordResource getThoughtRecordByIdAndUserId(@PathVariable(name = "userId") Long userId,
-                                                    @PathVariable(name = "thoughtRecordId") Long thoughtRecordId) {
+    public ThoughtRecordResource getThoughtRecordByIdAndUserId(
+            @PathVariable(name = "userId") Long userId,
+            @PathVariable(name = "thoughtRecordId") Long thoughtRecordId) {
         return convertToResource(thoughtRecordService.getThoughtRecordByIdAndUserId(thoughtRecordId, userId));
     }
 
     @PostMapping("/users/{userId}/thoughtRecords")
-    public ThoughtRecordResource createThoughtRecord(@PathVariable(name = "userId") Long userId,
-                                          @Valid @RequestBody ThoughtRecordResource resource) {
+    public ThoughtRecordResource createThoughtRecord(
+            @PathVariable(name = "userId") Long userId,
+            @Valid @RequestBody ThoughtRecordResource resource) {
         return convertToResource(thoughtRecordService.saveThoughtRecord(convertToEntity(resource),userId));
 
     }
     @PutMapping("/users/{userId}/thoughtRecords/{thoughtRecordId}")
-    public ThoughtRecordResource updateThoughtRecord(@PathVariable(name = "userId") Long userId,
-                                          @PathVariable(name = "thoughtRecordId") Long thoughtRecordId,
-                                          @Valid @RequestBody ThoughtRecordResource resource) {
+    public ThoughtRecordResource updateThoughtRecord(
+            @PathVariable(name = "userId") Long userId,
+            @PathVariable(name = "thoughtRecordId") Long thoughtRecordId,
+            @Valid @RequestBody ThoughtRecordResource resource) {
         return convertToResource(thoughtRecordService.updateThoughtRecordById(convertToEntity(resource),thoughtRecordId, userId));
     }
     @DeleteMapping("/users/{userId}/thoughtRecords/{thoughtRecordId}")
-    public ResponseEntity<?> deleteThoughtRecord(@PathVariable(name = "userId") Long userId,
-                                               @PathVariable(name = "thoughtRecordId") Long thoughtRecordId) {
+    public ResponseEntity<?> deleteThoughtRecord(
+            @PathVariable(name = "userId") Long userId,
+            @PathVariable(name = "thoughtRecordId") Long thoughtRecordId) {
         return thoughtRecordService.deleteThoughtRecord(thoughtRecordId, userId);
     }
     private ThoughtRecord convertToEntity(ThoughtRecordResource resource) {
