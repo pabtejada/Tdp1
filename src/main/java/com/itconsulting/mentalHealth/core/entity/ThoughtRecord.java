@@ -11,6 +11,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "thought_record")
@@ -37,7 +38,9 @@ public class ThoughtRecord extends AuditModel{
     private String tipForFriend;
 
     @ElementCollection
-    private List<String> moodsFelt = new ArrayList<String>();
+    @CollectionTable(name = "moods_felt", joinColumns = @JoinColumn(name = "thought_record_id"))
+    @Column(name = "mood")
+    private List<String> moodsFelt;
 
     @Column(name = "createdAt", nullable = false)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm")

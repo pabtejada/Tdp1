@@ -1,4 +1,4 @@
-package com.itconsulting.mentalHealth.controller;
+package com.itconsulting.mentalHealth.configuration.controller;
 
 import com.itconsulting.mentalHealth.core.entity.SleepRecord;
 import com.itconsulting.mentalHealth.core.service.SleepRecordService;
